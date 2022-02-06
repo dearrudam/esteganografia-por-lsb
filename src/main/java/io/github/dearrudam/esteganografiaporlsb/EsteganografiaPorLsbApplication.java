@@ -5,22 +5,92 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class EsteganografiaPorLsbApplication {
 
     public static void main(String[] args) throws IOException {
-        Path arquivoComAMensagem = Path.of("3f41a.BMP")
+        String mensagem = "A galera na TwitchTV hoje é massa demais.";
+
+        Path arquivoComAMensagem =
 //          criarArquivoComMensagem(
 //                Path.of("MARBLES.BMP"),
-//                "Olá mundo.")
+                Path.of("3f41a.BMP")
+//                , mensagem)
                 ;
 
-        String mensagemEscrita = lerMensagemDoArquivo(arquivoComAMensagem);
+        String mensagemLida = lerMensagemDoArquivo(arquivoComAMensagem);
 
-        System.out.println(mensagemEscrita.equals("Olá mundo."));
+        System.out.println(mensagemLida.equals(mensagem));
+    }
+
+    private static String lerMensagemDoArquivo(Path arquivoComAMensagem) {
+        var geradorDeMensagem = new LeitorDeMensagem();
+
+        try (
+                var input = new FileInputStream(arquivoComAMensagem.toFile())
+        ) {
+
+            int byteAtual = 0;
+            int posAtual = 0;
+            int byteInicial = -1;
+            while ((byteAtual = input.read()) > -1) {
+                if (posAtual == 10) {
+                    byteInicial = byteAtual;
+                }
+                if (posAtual >= 10 && byteInicial > -1 && posAtual >= byteInicial) {
+                    int[] bits = toArrayInt(byteAtual);
+                    geradorDeMensagem.adicionarBit(bits[bits.length - 1]);
+                }
+                posAtual++;
+            }
+
+
+        } catch (IOException e) {
+            throw new RuntimeException("falha ao ler o arquivo" + e.getMessage(), e);
+        }
+
+
+        return geradorDeMensagem.pegarMensagem();
+    }
+
+    private static Path criarArquivoComMensagem(Path arquivoFonte, Path arquivoDestino, String mensagem) throws IOException {
+
+        try (FileInputStream input = new FileInputStream(arquivoFonte.toFile());
+             FileOutputStream output = new FileOutputStream(arquivoDestino.toFile())) {
+
+            int byteDeInicio = -1;
+            int byteAtual = 0;
+            int pos = 0;
+            int[] bitsDaMensagem = toArrayDeBits(mensagem);
+            int posBitsDaMensagem = 0;
+            while ((byteAtual = input.read()) > -1) {
+                if (pos == 10) {
+                    byteDeInicio = ((byte) byteAtual & 0xFF);
+                }
+                if (byteDeInicio > -1 && pos >= byteDeInicio) {
+                    if (posBitsDaMensagem < bitsDaMensagem.length) {
+                        int[] bitsDoByteAtual = toArrayInt(byteAtual);
+                        bitsDoByteAtual[bitsDoByteAtual.length - 1] = bitsDaMensagem[posBitsDaMensagem];
+                        int novoByte = bitsDoByteAtual[7];
+                        novoByte += bitsDoByteAtual[6] * 2;
+                        novoByte += bitsDoByteAtual[5] * 4;
+                        novoByte += bitsDoByteAtual[4] * 8;
+                        novoByte += bitsDoByteAtual[3] * 16;
+                        novoByte += bitsDoByteAtual[2] * 32;
+                        novoByte += bitsDoByteAtual[1] * 64;
+                        novoByte += bitsDoByteAtual[0] * 128;
+                        byteAtual = novoByte;
+                        posBitsDaMensagem++;
+                    }
+                }
+                output.write(byteAtual);
+                pos++;
+            }
+        }
+
+        return arquivoDestino;
     }
 
     private static void testandoTextoParaBitsEBitsParaTexto() {
@@ -61,7 +131,7 @@ public class EsteganografiaPorLsbApplication {
         // [0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,1]
     }
 
-    private static int[] toArrayDeBits(String texto) {
+    public static int[] toArrayDeBits(String texto) {
         byte[] textoBytes = texto.getBytes(StandardCharsets.UTF_8);
         var arrayDeBits = new int[textoBytes.length * 8];
         for (int i = 0; i < textoBytes.length; i++) {
@@ -73,51 +143,6 @@ public class EsteganografiaPorLsbApplication {
         return arrayDeBits;
     }
 
-
-    private static Path criarArquivoComMensagem(Path arquivoFonte, String mensagem) throws IOException {
-        Path arquivoDestino = Path.of(UUID.randomUUID().toString().substring(0, 5) + ".BMP");
-
-        try (FileInputStream input = new FileInputStream(arquivoFonte.toFile());
-             FileOutputStream output = new FileOutputStream(arquivoDestino.toFile())) {
-
-            int byteDeInicio = -1;
-            int byteAtual = 0;
-            int pos = 0;
-            int[] bitsDaMensagem = toArrayDeBits(mensagem);
-            int posBitsDaMensagem = 0;
-            while ((byteAtual = input.read()) > -1) {
-                if (pos == 10) {
-                    byteDeInicio = ((byte) byteAtual & 0xFF);
-                }
-                if (byteDeInicio > -1 && pos >= byteDeInicio) {
-                    //
-                    if (posBitsDaMensagem < bitsDaMensagem.length) {
-                        int[] bitsDoByteAtual = toArrayInt(byteAtual);
-                        bitsDoByteAtual[bitsDoByteAtual.length - 1] = bitsDaMensagem[posBitsDaMensagem];
-                        int novoByte = bitsDoByteAtual[7];
-                        novoByte += bitsDoByteAtual[6] * 2;
-                        novoByte += bitsDoByteAtual[5] * 4;
-                        novoByte += bitsDoByteAtual[4] * 8;
-                        novoByte += bitsDoByteAtual[3] * 16;
-                        novoByte += bitsDoByteAtual[2] * 32;
-                        novoByte += bitsDoByteAtual[1] * 64;
-                        novoByte += bitsDoByteAtual[0] * 128;
-                        byteAtual = novoByte;
-                        posBitsDaMensagem++;
-                    }
-                }
-                output.write(byteAtual);
-                pos++;
-            }
-        }
-
-        return arquivoDestino;
-    }
-
-    private static String lerMensagemDoArquivo(Path arquivoComAMensagem) {
-        // TODO implementar
-        return null;
-    }
 
     private static void copyFile(Path arquivoOriginal, Path novoArquivo) throws IOException {
         try (FileInputStream input = new FileInputStream(arquivoOriginal.toFile());
