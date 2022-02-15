@@ -1,9 +1,7 @@
 package io.github.dearrudam.esteganografiaporlsb;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Optional;
 import java.util.Queue;
 
 public class LeitorDeMensagem {
@@ -24,10 +22,10 @@ public class LeitorDeMensagem {
         }
     }
 
-    private int lerNovoByte(final Queue<Integer> byteAtual) {
+    private int lerNovoByte(final Queue<Integer> bits) {
         int novoByte = 0;
         for (var pos = 7; pos >= 0; pos--) {
-            novoByte += byteAtual.poll() * ((int) Math.pow(2, pos));
+            novoByte += bits.poll() * ((int) Math.pow(2, pos));
         }
         return novoByte;
     }

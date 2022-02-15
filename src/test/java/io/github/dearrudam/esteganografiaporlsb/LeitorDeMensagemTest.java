@@ -8,36 +8,39 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LeitorDeMensagemTest {
 
 
-    @ParameterizedTest()
+    @ParameterizedTest(name = "[{index}] - {0}")
     @MethodSource("testArgs")
-    void testAdicionarBitABit(List<Integer> bits, String textoEsperado) {
+    void testGetMensagem(String cenario, List<Integer> bits, String textoEsperado) {
 
         LeitorDeMensagem gerador = new LeitorDeMensagem();
 
-        bits.forEach(gerador::adicionarBit);
+        for (Integer bit : bits) {
+            gerador.adicionarBit(bit);
+        }
 
         Assertions.assertEquals(textoEsperado, gerador.pegarMensagem());
-
 
     }
 
     public static Stream<Arguments> testArgs() {
         return Stream.of(
                 Arguments.arguments(
+                        "interpretando os bits que representam o caracter 'A'",
                         List.of(0, 1, 0, 0, 0, 0, 0, 1),
                         "A"
                 ),
                 Arguments.arguments(
+                        "interpretando os bits que representam o texto 'Olá mundo.'",
                         toArrayDeBits("Olá mundo."),
                         "Olá mundo."
                 ),
                 Arguments.arguments(
+                        "interpretando os bits até o primeiro ponto final",
                         toArrayDeBits("Olá mundo. Não devo aparecer"),
                         "Olá mundo."
                 )

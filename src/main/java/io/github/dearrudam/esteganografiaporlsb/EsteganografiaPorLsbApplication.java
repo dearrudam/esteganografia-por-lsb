@@ -14,10 +14,10 @@ public class EsteganografiaPorLsbApplication {
         String mensagem = "A galera na TwitchTV hoje é massa demais.";
 
         Path arquivoComAMensagem =
-//          criarArquivoComMensagem(
-//                Path.of("MARBLES.BMP"),
+          criarArquivoComMensagem(
+                Path.of("MARBLES.BMP"),
                 Path.of("3f41a.BMP")
-//                , mensagem)
+                , mensagem)
                 ;
 
         String mensagemLida = lerMensagemDoArquivo(arquivoComAMensagem);
@@ -55,7 +55,7 @@ public class EsteganografiaPorLsbApplication {
         return geradorDeMensagem.pegarMensagem();
     }
 
-    private static Path criarArquivoComMensagem(Path arquivoFonte, Path arquivoDestino, String mensagem) throws IOException {
+    public static Path criarArquivoComMensagem(Path arquivoFonte, Path arquivoDestino, String mensagem) throws IOException {
 
         try (FileInputStream input = new FileInputStream(arquivoFonte.toFile());
              FileOutputStream output = new FileOutputStream(arquivoDestino.toFile())) {
