@@ -1,4 +1,4 @@
-package io.github.dearrudam.esteganografiaporlsb;
+package io.github.dearrudam.esteganografiaporlsb.model;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;

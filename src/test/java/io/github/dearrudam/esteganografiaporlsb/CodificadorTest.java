@@ -1,5 +1,6 @@
 package io.github.dearrudam.esteganografiaporlsb;
 
+import io.github.dearrudam.esteganografiaporlsb.model.Codificador;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;

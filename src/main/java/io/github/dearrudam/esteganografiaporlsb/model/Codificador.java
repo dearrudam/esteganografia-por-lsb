@@ -1,4 +1,6 @@
-package io.github.dearrudam.esteganografiaporlsb;
+package io.github.dearrudam.esteganografiaporlsb.model;
+
+import io.github.dearrudam.esteganografiaporlsb.utils.ByteUtils;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,7 +26,7 @@ public class Codificador {
                 }
                 if (byteDeInicio > -1 && pos >= byteDeInicio) {
                     if (posBitsDaMensagem < bitsDaMensagem.length) {
-                        int[] bitsDoByteAtual = toBits(byteAtual);
+                        int[] bitsDoByteAtual = ByteUtils.toBits(byteAtual);
                         bitsDoByteAtual[bitsDoByteAtual.length - 1] = bitsDaMensagem[posBitsDaMensagem];
                         int novoByte = bitsDoByteAtual[7];
                         novoByte += bitsDoByteAtual[6] * 2;
@@ -48,25 +50,11 @@ public class Codificador {
         byte[] textoBytes = texto.getBytes(StandardCharsets.UTF_8);
         var arrayDeBits = new int[textoBytes.length * 8];
         for (int i = 0; i < textoBytes.length; i++) {
-            var bits = toBits(textoBytes[i]);
+            var bits = ByteUtils.toBits(textoBytes[i]);
             for (int y = 0; y < bits.length; y++) {
                 arrayDeBits[(8 * i) + y] = bits[y];
             }
         }
         return arrayDeBits;
-    }
-
-    private int[] toBits(int input) {
-        var rawData = new int[8];
-        int displayMask = 1 << 7;
-        for (int idx = 1; idx <= 8; idx++) {
-            if ((displayMask & input) == 0) {
-                rawData[idx - 1] = 0;
-            } else {
-                rawData[idx - 1] = 1;
-            }
-            input <<= 1;
-        }
-        return rawData;
     }
 }
