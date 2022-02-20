@@ -18,7 +18,7 @@ public class Codificador {
             int byteDeInicio = -1;
             int byteAtual = 0;
             int pos = 0;
-            int[] bitsDaMensagem = toArrayDeBits(mensagem);
+            int[] bitsDaMensagem = ByteUtils.toBits(mensagem);
             int posBitsDaMensagem = 0;
             while ((byteAtual = input.read()) > -1) {
                 if (pos == 10) {
@@ -44,17 +44,5 @@ public class Codificador {
                 pos++;
             }
         }
-    }
-
-    private int[] toArrayDeBits(String texto) {
-        byte[] textoBytes = texto.getBytes(StandardCharsets.UTF_8);
-        var arrayDeBits = new int[textoBytes.length * 8];
-        for (int i = 0; i < textoBytes.length; i++) {
-            var bits = ByteUtils.toBits(textoBytes[i]);
-            for (int y = 0; y < bits.length; y++) {
-                arrayDeBits[(8 * i) + y] = bits[y];
-            }
-        }
-        return arrayDeBits;
     }
 }
