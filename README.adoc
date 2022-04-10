@@ -1,7 +1,6 @@
 ## Bora programar?! Esteganografia com Java!!!
 
- Este projeto visa resolver o teste descrito no arquivo:
+ Este projeto visa resolver o teste descrito aqui:
 
-```bash
-challenge.png
-```
+image:./challenge.png["Company Logo",height=32]
+
