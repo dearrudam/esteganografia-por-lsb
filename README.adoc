@@ -2,5 +2,5 @@
 
  Este projeto visa resolver o teste descrito aqui:
 
-image:./challenge.png["Company Logo",height=32]
+image:./challenge.png["Company Logo",width=100%]
 
