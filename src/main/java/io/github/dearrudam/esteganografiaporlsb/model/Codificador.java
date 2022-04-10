@@ -1,6 +1,8 @@
 package io.github.dearrudam.esteganografiaporlsb.model;
 
 import io.github.dearrudam.esteganografiaporlsb.utils.ByteUtils;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,8 +10,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+@Service
 public class Codificador {
 
+    @Async
     public void codifique(String mensagem, Path imagemBase, Path imagemDeDestino) throws IOException {
 
         try (FileInputStream input = new FileInputStream(imagemBase.toFile());

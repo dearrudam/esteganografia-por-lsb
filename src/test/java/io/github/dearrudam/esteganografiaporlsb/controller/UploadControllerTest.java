@@ -1,18 +1,14 @@
 package io.github.dearrudam.esteganografiaporlsb.controller;
 
-import jdk.jfr.ContentType;
 import org.assertj.core.api.Assertions;
-import org.hamcrest.Condition;
-import org.hamcrest.Matchers;
-import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest
-@EnableWebMvc
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UploadControllerTest {
 
     @Autowired
@@ -42,7 +38,6 @@ public class UploadControllerTest {
                         .file(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN_VALUE))
-                .andExpect(content().string(Matchers.not(Matchers.blankString())))
                 .andReturn();
 
         Assertions
