@@ -1,5 +1,7 @@
 package io.github.dearrudam.esteganografiaporlsb.utils;
 
+import java.nio.charset.StandardCharsets;
+
 public class ByteUtils {
 
     public static int[] toBits(int input) {
@@ -15,6 +17,18 @@ public class ByteUtils {
             input <<= 1;
         }
         return rawData;
+    }
+
+    public static int[] toBits(String texto) {
+        byte[] textoBytes = texto.getBytes(StandardCharsets.UTF_8);
+        var arrayDeBits = new int[textoBytes.length * 8];
+        for (int i = 0; i < textoBytes.length; i++) {
+            var bits = ByteUtils.toBits(textoBytes[i]);
+            for (int y = 0; y < bits.length; y++) {
+                arrayDeBits[(8 * i) + y] = bits[y];
+            }
+        }
+        return arrayDeBits;
     }
 
 }
